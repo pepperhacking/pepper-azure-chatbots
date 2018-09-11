@@ -25,13 +25,16 @@ class MainActivity : RobotActivity(), RobotLifecycleCallbacks {
         Log.d(TAG, "runChat()")
         // Create a new Chatbot to handle Azure chatbot
         if (this.qiContext != null) {
-            val azureChatbot = AzureChatbot(this.qiContext)
+            //val azureChatbot = AzureChatbot(this.qiContext)
+            val qnAChatbot = QnAChatbot(this.qiContext)
             // Create a new Chat action.
             Log.i("TAG", "Create chat action")
             chat = ChatBuilder.with(qiContext)
-                    .withChatbot(azureChatbot)
+                    //.withChatbot(azureChatbot)
+                    .withChatbot(qnAChatbot)
                     .build()
             chat?.async()?.run()
+            Log.i("TAG", "Async run started...")
         }
     }
 

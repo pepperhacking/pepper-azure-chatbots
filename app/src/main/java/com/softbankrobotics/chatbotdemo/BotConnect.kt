@@ -10,7 +10,7 @@ class BotConnect private constructor() {
 
     init {
         Log.d(TAG, "Initializing BotConnect singleton")
-        directLineBot = DirectLineChatbot("YOUR_DIRECTLINE_SECRET")
+        directLineBot = DirectLineChatbot(CHATLINE_SECRET)
         /*
         directLineBot.start(object : DirectLineChatbot.Callback {
             override fun onStarted() {
