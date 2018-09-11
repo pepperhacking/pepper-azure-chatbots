@@ -9,10 +9,7 @@ class BotConnect private constructor() {
     private val directLineBot : DirectLineChatbot
 
     init {
-        Log.d("initTag", "this is a singleton")
-        // The access token is a
-        //val config = AIConfiguration("YOUR_CLIENT_ACCESS_TOKEN", AIConfiguration.SupportedLanguages.English)
-        //aiDataService = AIDataService(config)
+        Log.d(TAG, "Initializing BotConnect singleton")
         directLineBot = DirectLineChatbot("YOUR_DIRECTLINE_SECRET")
         /*
         directLineBot.start(object : DirectLineChatbot.Callback {
@@ -26,7 +23,6 @@ class BotConnect private constructor() {
             }
         })
         */
-
     }
 
     fun answerTo(question: String): String {
@@ -40,7 +36,7 @@ class BotConnect private constructor() {
         // Wait for the response and return it
         val response = task.response
         Log.i(TAG, "Response: $response")
-        return "IO a response to"
+        return response
     }
 
     companion object {
