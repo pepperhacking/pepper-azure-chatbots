@@ -3,38 +3,48 @@ package com.softbankrobotics.chatbotdemo
 import android.util.Log
 import com.smartnsoft.directlinechatbot.DirectLineChatbot
 
-
-val TAG = "ChatbotDemo"
+val TAG = "ChatbotDemoBotConnect"
 
 class BotConnect private constructor() {
-    class DialogflowConnect private constructor() {
-        //private val aiDataService: AIDataService
-        //private val
-        private val chatbot : DirectLineChatbot
+    private val directLineBot : DirectLineChatbot
 
-        init {
-            Log.d("initTag", "this is a singleton")
-            // The access token is a
-            //val config = AIConfiguration("YOUR_CLIENT_ACCESS_TOKEN", AIConfiguration.SupportedLanguages.English)
-            //aiDataService = AIDataService(config)
-            chatbot = DirectLineChatbot("YOUR_DIRECTLINE_SECRET")
-            chatbot.start(object : DirectLineChatbot.Callback {
-                override fun onStarted() {
-                    Log.d("CHATBOT", "Started")
-                    chatbot.send("Hello, Bot!")
-                }
+    init {
+        Log.d("initTag", "this is a singleton")
+        // The access token is a
+        //val config = AIConfiguration("YOUR_CLIENT_ACCESS_TOKEN", AIConfiguration.SupportedLanguages.English)
+        //aiDataService = AIDataService(config)
+        directLineBot = DirectLineChatbot("YOUR_DIRECTLINE_SECRET")
+        /*
+        directLineBot.start(object : DirectLineChatbot.Callback {
+            override fun onStarted() {
+                Log.d("CHATBOT", "Started")
+                directLineBot.send("Hello, Bot!")
+            }
 
-                override fun onMessageReceived(message: String) {
-                    Log.d("CHATBOT", message)
-                }
-            })
+            override fun onMessageReceived(message: String) {
+                Log.d("CHATBOT", message)
+            }
+        })
+        */
 
-        }
+    }
 
-        companion object {
-            private val TAG = "DialogflowConnect"
-            //val instance = DialogflowConnect()
-        }
+    fun answerTo(question: String): String {
+        Log.d(TAG, "answerTo: $question")
+        directLineBot.send(question)
+
+        // Execute the request
+        val task = RequestTask(directLineBot)
+        task.execute(question)
+
+        // Wait for the response and return it
+        val response = task.response
+        Log.i(TAG, "Response: $response")
+        return "IO a response to"
+    }
+
+    companion object {
+        val instance = BotConnect()
     }
 }
 
