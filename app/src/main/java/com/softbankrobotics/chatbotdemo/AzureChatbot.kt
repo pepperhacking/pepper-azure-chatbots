@@ -5,7 +5,7 @@ import com.aldebaran.qi.sdk.QiContext
 import com.aldebaran.qi.sdk.`object`.conversation.*
 import com.aldebaran.qi.sdk.`object`.locale.Locale
 
-class AzureChatbot internal constructor(context: QiContext) : BaseChatbot(context) {
+class AzureChatbot internal constructor(context: QiContext?) : BaseChatbot(context) {
     override fun replyTo(phrase: Phrase, locale: Locale): StandardReplyReaction? {
         if (phrase.text.isNotEmpty()){
             val botConnect = BotConnect.instance
