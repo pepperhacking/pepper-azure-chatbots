@@ -7,6 +7,9 @@ import com.aldebaran.qi.sdk.QiSDK
 import com.aldebaran.qi.sdk.RobotLifecycleCallbacks
 import com.aldebaran.qi.sdk.`object`.conversation.Chat
 import com.aldebaran.qi.sdk.builder.ChatBuilder
+import com.aldebaran.qi.sdk.builder.QiChatbotBuilder
+import com.aldebaran.qi.sdk.builder.SayBuilder
+import com.aldebaran.qi.sdk.builder.TopicBuilder
 import com.aldebaran.qi.sdk.design.activity.RobotActivity
 
 class MainActivity : RobotActivity(), RobotLifecycleCallbacks {
@@ -17,12 +20,27 @@ class MainActivity : RobotActivity(), RobotLifecycleCallbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        Log.d(TAG, "... asking for register ...")
         QiSDK.register(this, this)
+        Log.d(TAG, "... registered.")
     }
 
     override fun onRobotFocusGained(theContext: QiContext) {
         qiContext = theContext
         Log.d(TAG, "runChat()")
+        // Create a QiChatbot
+        val say = SayBuilder.with(qiContext)
+                .withText("Getting ready to chat")
+                .build()
+        say.run()
+        val topic = TopicBuilder.with(qiContext)
+                .withResource(R.raw.demo_qichat)
+                .build()
+        // Create a new QiChatbot.
+        Log.i("TAG", "Create qichatbot")
+        val qiChatbot = QiChatbotBuilder.with(qiContext)
+                .withTopic(topic)
+                .build()
         // Create a new Chatbot to handle Azure chatbot
         if (this.qiContext != null) {
             //val azureChatbot = AzureChatbot(this.qiContext)
@@ -31,7 +49,7 @@ class MainActivity : RobotActivity(), RobotLifecycleCallbacks {
             Log.i("TAG", "Create chat action")
             chat = ChatBuilder.with(qiContext)
                     //.withChatbot(azureChatbot)
-                    .withChatbot(qnAChatbot)
+                    .withChatbot(qiChatbot, qnAChatbot)
                     .build()
             chat?.async()?.run()
             Log.i("TAG", "Async run started...")
