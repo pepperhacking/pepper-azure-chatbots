@@ -43,8 +43,6 @@ class QnAChatbot internal constructor(context: QiContext?) : BaseChatbot(context
 
     override fun replyTo(phrase: Phrase, locale: Locale): StandardReplyReaction? {
         if (phrase.text.isNotEmpty()){
-
-
             val url = QNA_HOST + QNA_ENDPOINT;
             val json = "{\"question\":\"$phrase.text\"}"
             val response = post(url, json)
@@ -54,26 +52,28 @@ class QnAChatbot internal constructor(context: QiContext?) : BaseChatbot(context
                 return replyFromAIResponse(response)
             }
         }
-        return null
+        return StandardReplyReaction(
+                ChatbotUtteredReaction(qiContext, ""),
+                ReplyPriority.FALLBACK
+        )
     }
 
     /**
      * Build a reply that can be processed by our chatbot
      */
     private fun replyFromAIResponse(responseJson: AIResponse): StandardReplyReaction {
+        //var answer = responseJson; // For now, ugly
         val jObject = JSONObject(responseJson)
         Log.d(TAG, "replyFromAIResponse $responseJson")
         var answer : String = "sorry"
+        var priority = ReplyPriority.FALLBACK
         val answers = jObject.getJSONArray("answers")
         if ((answers != null) && (answers.length() > 0)) {
-            val answerm = answers.getJSONObject(0)?.getString("answer")
-            Log.d(TAG, "answer: $answerm")
-            if (answerm != null) {
-                answer = answerm
-                if (answer.length > 100) {
-                    // Arbitrary cut too long answer, or robot talks for ages.
-                    answer = answer.substring(0, 100)
-                }
+            val maybe_answer = answers.getJSONObject(0)?.getString("answer")
+            Log.d(TAG, "answer: $maybe_answer")
+            if (maybe_answer != null) {
+                answer = maybe_answer
+                priority = ReplyPriority.NORMAL
             } else {
                 Log.d(TAG, "Weird empty answer")
             }
@@ -85,9 +85,6 @@ class QnAChatbot internal constructor(context: QiContext?) : BaseChatbot(context
         val reaction: BaseChatbotReaction = ChatbotUtteredReaction(qiContext, answer)
         // Make the reply and return it
         Log.d(TAG, ".. replying...")
-        return StandardReplyReaction(
-                reaction ,
-                ReplyPriority.FALLBACK
-        )
+        return StandardReplyReaction(reaction, priority)
     }
 }

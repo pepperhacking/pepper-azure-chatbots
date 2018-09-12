@@ -6,4 +6,4 @@ concept:(hello) [hello hi hey "good morning" greetings]
 u:(~hello) ~hello
 
 # Replying to speech
-u:("who is Emile") Emile is my creator
+u:("who is Emile") Emile made this app
