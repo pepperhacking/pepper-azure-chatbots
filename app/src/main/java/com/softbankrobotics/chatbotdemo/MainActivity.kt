@@ -11,14 +11,18 @@ import com.aldebaran.qi.sdk.builder.QiChatbotBuilder
 import com.aldebaran.qi.sdk.builder.SayBuilder
 import com.aldebaran.qi.sdk.builder.TopicBuilder
 import com.aldebaran.qi.sdk.design.activity.RobotActivity
+import com.softbankrobotics.qisdkutils.ui.conversation.ConversationItemType
+import com.softbankrobotics.qisdkutils.ui.conversation.ConversationView
 
 class MainActivity : RobotActivity(), RobotLifecycleCallbacks {
 
     private var chat: Chat? = null
     private var qiContext: QiContext? = null
+    private var conversationView: ConversationView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        conversationView = findViewById(R.id.conversationView)
         setContentView(R.layout.activity_main)
         Log.d(TAG, "... asking for register ...")
         QiSDK.register(this, this)
@@ -33,6 +37,7 @@ class MainActivity : RobotActivity(), RobotLifecycleCallbacks {
                 .withText("Getting ready to chat")
                 .build()
         say.run()
+        displayLine("Ready to chat.", ConversationItemType.ROBOT_OUTPUT)
         val topic = TopicBuilder.with(qiContext)
                 .withResource(R.raw.demo_qichat)
                 .build()
@@ -51,9 +56,22 @@ class MainActivity : RobotActivity(), RobotLifecycleCallbacks {
                     //.withChatbot(azureChatbot)
                     .withChatbot(qiChatbot, qnAChatbot)
                     .build()
+            // Plug listeners for nice display
+            chat?.addOnHeardListener { phrase ->
+                displayLine(phrase.text, ConversationItemType.HUMAN_INPUT)
+            }
+            chat?.addOnSayingChangedListener { phrase ->
+                displayLine(phrase.text, ConversationItemType.ROBOT_OUTPUT)
+            }
+            // run it!
             chat?.async()?.run()
             Log.i("TAG", "Async run started...")
         }
+    }
+
+    private fun displayLine(text: String, type: ConversationItemType) {
+        Log.i(TAG, "Displaying phrase: $text")
+        runOnUiThread { conversationView?.addLine(text, type) }
     }
 
     override fun onRobotFocusLost() {

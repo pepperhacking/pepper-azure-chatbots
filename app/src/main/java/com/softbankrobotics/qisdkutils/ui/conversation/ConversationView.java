@@ -7,6 +7,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.softbankrobotics.chatbotdemo.R;
 
@@ -41,6 +42,9 @@ public class ConversationView extends RecyclerView {
             DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
             dividerItemDecoration.setDrawable(drawable);
             this.addItemDecoration(dividerItemDecoration);
+            Log.w("ConversationView", "Setup done.");
+        } else {
+            Log.w("ConversationView", "No drawable");
         }
     }
 }
